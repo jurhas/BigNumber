@@ -1025,7 +1025,7 @@ BNERR_NUMBER BNtimes(pBigNumber a,pBigNumber b,pBigNumber ans )
     register int *loc_run;
     register char *run_a_stop,*run_b_stop;
     register char *run_ans ;
-    int *loc_buf,*loc_buf_end;
+    bn_times_buffert_t *loc_buf,*loc_buf_end;
     BNreset(ans);
     n=BNlen(a);
     m=BNlen(b);
@@ -1035,7 +1035,7 @@ BNERR_NUMBER BNtimes(pBigNumber a,pBigNumber b,pBigNumber ans )
     if( (res= BNcheck_buffer(ans,n+m+1))!=BN_OK)
         return res;
 
-    loc_buf=calloc(n+m,sizeof(int));
+    loc_buf=calloc(n+m,sizeof(bn_times_buffert_t));
     if(!loc_buf)
         return BN_RUN_OUT_OF_MEMORY;
 
