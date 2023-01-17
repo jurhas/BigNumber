@@ -2369,6 +2369,12 @@ static BNERR_NUMBER BNfactorize_start_from(pBigNumber n, pBigNumber start, pVect
             while(1);
 //                printf("%s^%d\n",BNto_string_inplace(i),vf->p[vf->pos-1].cnt);
 //                BNto_number_inplace(i);
+            if(BNis_one(n))
+            {
+                BNint_to_bn(sqr,1);
+                break;
+            }
+
             if(BNlen(n)>1000)
             {
                 if((res=BNrough_sqrt(n,sqr))!=BN_OK) goto ERR5 ;
@@ -2416,7 +2422,7 @@ static BNERR_NUMBER BNfactorize_start_from(pBigNumber n, pBigNumber start, pVect
     {
          if( (res=BNrough_sqrt(n,sqr))!=BN_OK) goto ERR5;
     }
-    else if(BNlt(i,sqr))
+    else if(BNlt(i,sqr) )
     {
         pBigNumber rem,ind;
         if ( !(rem=BNnew_default())) goto ERR5;
@@ -2545,3 +2551,29 @@ ERR1:
     BNdestroy(tmp);
     return res;
 }
+BNERR_NUMBER BNfibonacci(pBigNumber max,pVectFact ans)
+{
+    BNERR_NUMBER res=BN_OK;
+    pBigNumber x0,x1,xtmp;
+    if(!(x0=BNnew_from_int(0))) { res=BN_RUN_OUT_OF_MEMORY;goto ERR1;};
+    if(!(x1=BNnew_from_int(1))) { res=BN_RUN_OUT_OF_MEMORY;goto ERR2;};
+    if(!(xtmp=BNnew_from_int(1))) { res=BN_RUN_OUT_OF_MEMORY;goto ERR3;};
+    while(BNlt(x1,max))
+    {
+       if((res=BNpush_n(ans,x1))!=BN_OK) goto ERR4;
+       if((res=BNcopy(x1,x0))!=BN_OK) goto ERR4;
+       if((res=BNcopy(xtmp,x1))!=BN_OK) goto ERR4;
+       if((res=BNplus(x0,x1,xtmp))!=BN_OK) goto ERR4;
+    }
+    res=BNpush_n(ans,x1);
+ERR4:
+    BNdestroy(xtmp);
+ERR3:
+    BNdestroy(x1);
+ERR2:
+    BNdestroy(x0);
+ERR1:
+    return res;
+}
+
+
